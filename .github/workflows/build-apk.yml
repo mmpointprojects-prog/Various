@@ -1,0 +1,45 @@
+name: Build APK
+
+on:
+  push:
+    branches: ["main", "claude/workout-tracking-app-xd7hno"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Test and build
+        run: ./gradlew testDebugUnitTest assembleDebug --console=plain
+
+      - name: Name APK with timestamp
+        id: name
+        run: |
+          STAMP=$(date -u +%Y-%m-%d_%H%M)
+          cp app/build/outputs/apk/debug/app-debug.apk "Spotter_${STAMP}.apk"
+          echo "stamp=${STAMP}" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Spotter_${{ steps.name.outputs.stamp }}
+          path: Spotter_*.apk
+
+      # A GitHub Release is the easiest place to grab the APK from your phone's browser.
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "build-${{ steps.name.outputs.stamp }}" Spotter_*.apk \
+            --target "${{ github.sha }}" --prerelease \
+            --title "Spotter ${{ steps.name.outputs.stamp }} (UTC)" \
+            --notes "Built from ${{ github.ref_name }} @ ${GITHUB_SHA::7}. Download the .apk on your phone and open it to install/update."
