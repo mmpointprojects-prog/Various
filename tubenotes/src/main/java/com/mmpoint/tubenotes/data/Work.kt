@@ -73,7 +73,7 @@ object Work {
                     }
                 }
             } catch (t: Throwable) {
-                _errors.update { it + (entryId to (t.message ?: "Something went wrong. Try again.")) }
+                _errors.update { it + (entryId to Claude.redact(t.message ?: "Something went wrong. Try again.")) }
             } finally {
                 _busy.update { it - entryId }
             }

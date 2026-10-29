@@ -134,4 +134,22 @@ class AppFlowTest {
             shows("What would you like?")
         }
     }
+
+    @Test
+    fun pastingAWholeCurlExampleSavesOnlyTheKey() {
+        val key = "sk-ant-api03-AbCdEfGhIjKlMnOpQrStUvWxYz_0123456789-abcdEFGH"
+        ActivityScenario.launch(MainActivity::class.java).use {
+            rule.waitForIdle()
+            rule.onNodeWithContentDescription("Settings").performClick()
+            rule.onNode(hasText("API key (sk-ant-…)")).performTextInput("hello there")
+            click("Save key")
+            shows("No API key found")
+            rule.onNode(hasText("API key (sk-ant-…)")).performTextInput(
+                " curl https://api.anthropic.com/v1/messages --header \"x-api-key: $key\" --header \"anthropic-version: 2026-10-21\"",
+            )
+            click("Save key")
+            shows("Saved key: sk-ant-…dEFGH")
+        }
+        assertEquals(key, Store.current.apiKey)
+    }
 }

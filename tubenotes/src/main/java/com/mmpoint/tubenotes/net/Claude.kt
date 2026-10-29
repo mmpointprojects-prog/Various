@@ -19,6 +19,16 @@ object Claude {
     const val MODEL = "claude-opus-5-5"
     private const val URL = "https://api.anthropic.com/v1/messages"
     private val json = Json { ignoreUnknownKeys = true }
+    private val keyPattern = Regex("sk-ant-[A-Za-z0-9_-]{20,}")
+
+    /** Finds the API key in whatever was pasted: a bare key, or a whole curl example copied from the docs. */
+    fun extractKey(text: String): String? = keyPattern.find(text)?.value
+
+    /** Short form that is safe to show on screen, e.g. "sk-ant-…3vgAA". */
+    fun maskKey(key: String): String = if (key.length > 12) "sk-ant-…" + key.takeLast(5) else "sk-ant-…"
+
+    /** Removes any API key from text before it is shown or saved. */
+    fun redact(text: String): String = keyPattern.replace(text, "sk-ant-…")
 
     private const val SYSTEM =
         "You turn YouTube video transcripts into notes for one person. The transcript is raw caption text " +
@@ -91,18 +101,25 @@ object Claude {
 
     fun write(apiKey: String, kind: OutputKind, title: String, channel: String, transcript: String): String {
         if (apiKey.isBlank()) throw ClaudeException("Add your Claude API key in Settings to make summaries and bullet points.")
-        val r = Http.request(
-            URL,
-            method = "POST",
-            headers = mapOf(
-                "Content-Type" to "application/json",
-                "x-api-key" to apiKey.trim(),
-                "anthropic-version" to "2026-10-21",
-                "anthropic-beta" to "server-side-fallback-2026-07-01",
-            ),
-            body = buildRequest(kind, title, channel, transcript),
-            readTimeoutMs = 300_000,
-        )
+        val key = extractKey(apiKey)
+            ?: throw ClaudeException("The saved Claude API key isn't valid. In Settings, paste just the key (it starts with sk-ant-).")
+        val r = try {
+            Http.request(
+                URL,
+                method = "POST",
+                headers = mapOf(
+                    "Content-Type" to "application/json",
+                    "x-api-key" to key,
+                    "anthropic-version" to "2026-10-21",
+                    "anthropic-beta" to "server-side-fallback-2026-07-01",
+                ),
+                body = buildRequest(kind, title, channel, transcript),
+                readTimeoutMs = 300_000,
+            )
+        } catch (e: IllegalArgumentException) {
+            // A malformed header value; never echo it, since it may contain the key.
+            throw ClaudeException("The saved Claude API key isn't valid. In Settings, paste just the key (it starts with sk-ant-).")
+        }
         return parseResponse(r.code, r.body)
     }
 

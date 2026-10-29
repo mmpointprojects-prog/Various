@@ -364,7 +364,8 @@ private fun PastePanel(onCancel: () -> Unit, onSave: (String) -> Boolean) {
 fun SettingsScreen(onBack: () -> Unit) {
     val context = LocalContext.current
     val data by Store.data.collectAsStateWithLifecycle()
-    var key by rememberSaveable { mutableStateOf(data.apiKey) }
+    var key by rememberSaveable { mutableStateOf("") }
+    var keyError by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -386,18 +387,36 @@ fun SettingsScreen(onBack: () -> Unit) {
                     "Anthropic account (usually a few cents per video). Full transcripts don't need a key.",
                 style = MaterialTheme.typography.bodyMedium,
             )
+            Text(
+                if (data.apiKey.isBlank()) "No key saved." else "Saved key: ${Claude.maskKey(data.apiKey)}",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
             OutlinedTextField(
                 value = key,
-                onValueChange = { key = it },
-                label = { Text("API key (sk-ant-…)") },
+                onValueChange = { key = it; keyError = false },
+                label = { Text(if (data.apiKey.isBlank()) "API key (sk-ant-…)" else "Replace key (sk-ant-…)") },
                 singleLine = true,
+                isError = keyError,
+                supportingText = {
+                    Text(
+                        if (keyError) "No API key found. Copy just the key; it starts with sk-ant-."
+                        else "Paste the key on its own. If you paste a whole example command, TubeNotes keeps only the key.",
+                    )
+                },
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth(),
             )
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = {
-                    Store.update { it.copy(apiKey = key.trim()) }
-                    Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+                Button(enabled = key.isNotBlank(), onClick = {
+                    val found = Claude.extractKey(key)
+                    if (found == null) {
+                        keyError = true
+                    } else {
+                        Store.update { it.copy(apiKey = found) }
+                        key = ""
+                        Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+                    }
                 }) { Text("Save key") }
                 if (data.apiKey.isNotBlank()) {
                     OutlinedButton(onClick = { key = ""; Store.update { it.copy(apiKey = "") } }) { Text("Remove key") }

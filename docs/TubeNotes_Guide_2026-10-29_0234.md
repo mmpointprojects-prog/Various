@@ -19,7 +19,9 @@ saved result again costs nothing: TubeNotes doesn't contact YouTube or Claude a 
 
 ## One-time setup (summaries and bullet points)
 1. Go to **console.anthropic.com → API keys** and create a key (it starts with `sk-ant-`).
-2. In TubeNotes, tap the **⚙ Settings** icon, paste the key and tap **Save key**.
+2. In TubeNotes, tap the **⚙ Settings** icon, paste the key and tap **Save key**. Paste only the key
+   (it starts with `sk-ant-`); if you paste a whole example command, TubeNotes keeps just the key. Settings then
+   shows `Saved key: sk-ant-…` plus the key's last 5 characters, so you can check which key is saved.
 
 The key is stored only on your phone. Each summary or bullet list is billed to your Anthropic account, usually a
 few cents for a typical video (the model is Claude Opus 5.5 at low effort). Transcripts are free.
@@ -40,7 +42,7 @@ few cents for a typical video (the model is Claude Opus 5.5 at low effort). Tran
 |---|---|
 | *YouTube didn't share this video's captions…* | 1) Tap **Try again** a bit later. 2) Tap **Paste transcript**: in YouTube, open the video's description → **Show transcript**, select all the text, copy, paste it into TubeNotes and tap **Use this**. 3) Try on Wi-Fi instead of mobile data, or the other way round. |
 | *This video has no captions* | The uploader turned captions off and YouTube has none. Use **Paste transcript** if you have the text from somewhere else. |
-| *Add your Claude API key…* / *rejected the API key* | Settings → paste a valid key → **Save key**, then tap **Try again**. |
+| *Add your Claude API key…* / *key isn't valid* / *rejected the API key* | Settings → paste a valid key → **Save key**, then tap **Try again**. |
 | *rate limit* / *overloaded* | Wait a minute and tap **Try again**. |
 | *Network error* | Check your connection and tap **Try again**. |
 

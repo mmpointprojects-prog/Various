@@ -13,6 +13,6 @@ runs morning/evening check-ins, pre-gym snack timing, peptide/supplement reminde
 Share a YouTube link to it and choose **Full transcript**, **Brief summary** or **Bullet points**. Every
 video and result is kept in a searchable log.
 
-- **Install:** [`apk/TubeNotes_2026-10-29_0234.apk`](apk/TubeNotes_2026-10-29_0234.apk) (or the latest `tubenotes-…` **Release**).
+- **Install:** [`apk/TubeNotes_2026-10-29_0258.apk`](apk/TubeNotes_2026-10-29_0258.apk) (or the latest `tubenotes-…` **Release**).
 - **Full guide:** [`docs/TubeNotes_Guide_2026-10-29_0234.md`](docs/TubeNotes_Guide_2026-10-29_0234.md)
 - **Build:** `./gradlew :tubenotes:testDebugUnitTest :tubenotes:assembleDebug`

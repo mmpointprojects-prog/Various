@@ -125,3 +125,27 @@ to love</text><text start="22" dur="1">Tom &amp;amp; Jerry &amp;quot;hi&amp;quot
         assertThrows(ClaudeException::class.java) { Claude.write("", OutputKind.SUMMARY, "", "", "x") }
     }
 }
+
+class ApiKeyTest {
+    private val key = "sk-ant-api03-AbCdEfGhIjKlMnOpQrStUvWxYz_0123456789-abcdEFGH"
+
+    @Test
+    fun findsKeyInsidePastedCurlExample() {
+        val curl = """curl https://api.anthropic.com/v1/messages \
+  --header "x-api-key: $key" \
+  --header "anthropic-version: 2026-10-21" \
+  --data '{"model": "claude-opus-5-5", "max_tokens": 1024}'"""
+        assertEquals(key, Claude.extractKey(curl))
+        assertEquals(key, Claude.extractKey("  $key\n"))
+        assertNull(Claude.extractKey("hello"))
+        assertNull(Claude.extractKey("sk-ant-short"))
+    }
+
+    @Test
+    fun errorsNeverShowTheKey() {
+        assertEquals("bad header: sk-ant-… end", Claude.redact("bad header: $key end"))
+        assertEquals("sk-ant-…dEFGH", Claude.maskKey(key))
+        val e = assertThrows(ClaudeException::class.java) { Claude.write("not a key at all", OutputKind.SUMMARY, "", "", "x") }
+        assertTrue(e.message!!.contains("isn't valid"))
+    }
+}

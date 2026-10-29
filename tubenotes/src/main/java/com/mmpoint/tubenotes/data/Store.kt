@@ -1,6 +1,7 @@
 package com.mmpoint.tubenotes.data
 
 import android.content.Context
+import com.mmpoint.tubenotes.net.Claude
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,6 +39,9 @@ object Store {
                 }
         } else AppData()
         file = f
+        // Older versions saved whatever was pasted; keep only the key itself.
+        val key = current.apiKey
+        if (key.isNotBlank() && Claude.extractKey(key) != key) update { it.copy(apiKey = Claude.extractKey(key).orEmpty()) }
     }
 
     val current: AppData get() = _data.value
