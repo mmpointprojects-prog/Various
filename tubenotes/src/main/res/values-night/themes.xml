@@ -1,0 +1,3 @@
+<resources>
+    <style name="Theme.TubeNotes" parent="android:Theme.Material.NoActionBar" />
+</resources>
