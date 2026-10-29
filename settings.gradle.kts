@@ -14,3 +14,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Spotter"
 include(":app")
+include(":tubenotes")
