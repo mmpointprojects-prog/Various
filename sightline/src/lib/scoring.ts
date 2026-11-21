@@ -18,7 +18,7 @@ function concertMetrics(sec: Section, row: number, setup: Setup): SeatMetrics {
   const pen = sec.kind === 'floor' ? Math.min(18, (row - 1) * 1.2) : 0;
   const score = Math.round(clamp(0.6 * dScore + 0.4 * aScore - pen, 0, 100));
   const facing = Math.max(0, Math.cos(rad(Math.min(ang, 90))));
-  let price = sec.kind === 'floor' ? 330 - d * 0.9 : sec.kind === 'lower' ? 110 + 150 * facing - row * 2.5 : 55 + 60 * facing - row * 1.5;
+  let price = sec.kind === 'floor' ? 330 - d * 0.9 : sec.kind === 'lower' ? 110 + 150 * facing - row * 2.5 : sec.kind === 'middle' ? 85 + 100 * facing - row * 2 : 55 + 60 * facing - row * 1.5;
   price = Math.max(45, Math.round(price / 5) * 5);
 
   const notes: string[] = [];
@@ -27,6 +27,7 @@ function concertMetrics(sec: Section, row: number, setup: Setup): SeatMetrics {
   if (ang > 55) notes.push('Sharp side angle. Speaker stacks and the stage edge cut into the view.');
   else if (ang < 20 && sec.kind !== 'floor') notes.push('Straight-on view of the stage and main screen.');
   if (sec.kind === 'floor') notes.push(row <= 3 ? 'Near the barricade. Nothing between you and the stage.' : 'Flat floor. You look over the heads in front of you.');
+  if (sec.kind === 'middle') notes.push('Mid-level seat. Raised over the floor crowd without the upper-bowl climb.');
   if (sec.kind === 'upper') notes.push('Steep upper bowl. Good overview of the whole light show.');
   return { d, ang, eye: p.y, score, price, value: (score / price) * 100, notes: notes.slice(0, 3), sport: false };
 }
@@ -43,6 +44,7 @@ function sportMetrics(sec: Section, row: number, setup: Setup): SeatMetrics {
   let price: number;
   if (sec.kind === 'floor') price = sec.courtside ? 3000 - (row - 1) * 700 : 1200 - row * 150;
   else if (sec.kind === 'lower') price = hockey ? 140 + 220 * side - row * 5 + (row <= 2 ? 60 : 0) : 150 + 300 * side - row * 7;
+  else if (sec.kind === 'middle') price = (hockey ? 95 + 140 * side : 100 + 200 * side) - row * 4;
   else price = (hockey ? 55 + 70 * side : 60 + 90 * side) - row * 2;
   price = Math.max(scale < 1 ? 15 : 45, Math.round((price * scale) / 5) * 5);
 
@@ -56,6 +58,7 @@ function sportMetrics(sec: Section, row: number, setup: Setup): SeatMetrics {
     if (view === 'Corner') notes.push(hockey ? 'Corner view. Plays coming into your end look great; you see both zones at an angle.' : 'Corner view. Good angle on both baskets, a little foreshortened.');
     if (view === 'End') notes.push(hockey ? 'Behind the goal. Your end is great; the far end is a long way off.' : 'Behind the basket. The near end is great; the far end flattens out.');
   }
+  if (sec.kind === 'middle') notes.push('Mid-level view: high enough to read plays, still close to the action.');
   if (sec.kind === 'upper') notes.push('High view of plays developing. Players look small; the scoreboard helps.');
   return { d, ang, view, eye: p.y, score, price, value: (score / price) * 100, notes: notes.slice(0, 3), sport: true };
 }

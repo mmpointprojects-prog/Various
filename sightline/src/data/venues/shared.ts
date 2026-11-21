@@ -59,8 +59,8 @@ export function floor10(): FloorSection[] {
 }
 
 /** Section ids from a to b inclusive, wrapping past `last` back to `first`. */
-export function range(a: number, b: number, first: number, last: number): string[] {
+export function range(a: number, b: number, first: number, last: number, prefix = ''): string[] {
   const out: string[] = [];
-  for (let n = a; ; n = n === last ? first : n + 1) { out.push(String(n)); if (n === b) break; }
+  for (let n = a; ; n = n === last ? first : n + 1) { out.push(prefix + n); if (n === b) break; }
   return out;
 }

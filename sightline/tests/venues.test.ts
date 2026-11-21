@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { VENUES } from '../src/data/venues/index.ts';
-import { rad, ringPt, rowsOf, sectionsFor, seatPos } from '../src/lib/geometry.ts';
+import { rad, ringPt, ringsOf, rowsOf, sectionsFor, seatPos, topOf } from '../src/lib/geometry.ts';
 import { metrics } from '../src/lib/scoring.ts';
 import type { SetupId } from '../src/lib/types.ts';
 
@@ -47,6 +47,16 @@ for (const v of VENUES) {
         assert.ok(r <= 1, `${f.id} corner (${x}, ${z}) inside the floor (${r.toFixed(2)})`);
       }
     }
+  });
+
+  test(`${v.name}: seating rings stack outward and upward without overlapping`, () => {
+    const rings = ringsOf(v.levels);
+    for (let i = 1; i < rings.length; i++) {
+      const a = rings[i - 1], b = rings[i];
+      assert.ok(b.rx0 >= a.rx1 && b.rz0 >= a.rz1, `${b.name} starts outside ${a.name}`);
+      assert.ok(b.y0 >= topOf(a), `${b.name} starts above the top of ${a.name}`);
+    }
+    assert.ok(topOf(rings[rings.length - 1]) < v.ceiling, 'top row is below the ceiling');
   });
 
   test(`${v.name}: sections are evenly spaced around the bowl`, () => {

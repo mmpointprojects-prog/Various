@@ -238,6 +238,7 @@ export function CompareApp({ venue, events, eventsSource, asOf }: Props) {
             <ul className="legend">
               <li><span className="sw f" />Floor</li>
               <li><span className="sw l" />{venue.levels.lower.name}</li>
+              {venue.levels.middle && <li><span className="sw m" />{venue.levels.middle.name}</li>}
               <li><span className="sw u" />{venue.levels.upper.name}</li>
               {setup.closed.length > 0 && <li><span className="sw b" />Closed in this setup</li>}
             </ul>

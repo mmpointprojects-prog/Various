@@ -3,7 +3,7 @@
 
 export type SetupId = 'end' | 'basketball' | 'hockey';
 export type Sport = 'basketball' | 'hockey';
-export type LevelKey = 'lower' | 'upper';
+export type LevelKey = 'lower' | 'middle' | 'upper';
 export type PickLetter = 'A' | 'B' | 'C' | 'D';
 
 export interface Vec3 { x: number; y: number; z: number }
@@ -21,7 +21,11 @@ export interface Level {
   count: number;           // sections in the ring
   first: number;           // lowest section number
   centerNum: number;       // section number centered on the stage end (may be fractional)
+  prefix?: string;         // section id prefix, e.g. 'C' for club sections C1–C35
 }
+
+/** Seating rings, inside out. `middle` is optional: a club level or second tier between lower and upper. */
+export interface Levels { lower: Level; middle?: Level; upper: Level }
 
 export interface FloorSection {
   id: string;
@@ -65,7 +69,7 @@ export interface Venue {
   state: string;
   ceiling: number;
   seatColors: number[];    // approximate seat colors, used by the enhanced view
-  levels: { lower: Level; upper: Level };
+  levels: Levels;
   setups: Partial<Record<SetupId, Setup>>;
   defaults: Partial<Record<SetupId, DefaultPick[]>>;
   events: VenueEvent[];

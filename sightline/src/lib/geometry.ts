@@ -1,4 +1,4 @@
-import type { BowlSection, FloorSection, Level, Section, Setup, Vec3 } from './types.ts';
+import type { BowlSection, FloorSection, Level, Levels, Section, Setup, Vec3 } from './types.ts';
 
 export const rad = (d: number) => (d * Math.PI) / 180;
 export const deg = (r: number) => (r * 180) / Math.PI;
@@ -55,12 +55,19 @@ export function numAt(L: Level, thetaDeg: number) {
   return L.first + (((Math.round(v) - L.first) % L.count) + L.count) % L.count;
 }
 
-export function sectionsFor(levels: { lower: Level; upper: Level }, setup: Setup): Section[] {
+/** The venue's rings from the floor up: lower, middle (if any), upper. */
+export const ringsOf = (levels: Levels): Level[] => (levels.middle ? [levels.lower, levels.middle, levels.upper] : [levels.lower, levels.upper]);
+/** Section id for a number on a ring ('C' + 12 for prefixed club rings). */
+export const secId = (L: Level, num: number) => (L.prefix ?? '') + num;
+/** Height of a ring's top tread. */
+export const topOf = (L: Level) => L.y0 + (L.rows - 1) * L.rise;
+
+export function sectionsFor(levels: Levels, setup: Setup): Section[] {
   const out: Section[] = [];
-  for (const L of [levels.lower, levels.upper]) {
+  for (const L of ringsOf(levels)) {
     const step = 360 / L.count;
     for (let i = 0; i < L.count; i++) {
-      const num = L.first + i, c = thetaOf(L, num), id = String(num);
+      const num = L.first + i, c = thetaOf(L, num), id = secId(L, num);
       out.push({ id, kind: L.key, level: L, c, a0: c - step / 2, a1: c + step / 2, blocked: setup.closed.includes(id) } satisfies BowlSection);
     }
   }

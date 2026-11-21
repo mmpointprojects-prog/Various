@@ -3,7 +3,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
-import { clamp, hash, numAt, rad, ringPt, seatPos, thetaOf } from '../geometry.ts';
+import { clamp, hash, numAt, rad, ringPt, ringsOf, seatPos, secId, thetaOf, topOf } from '../geometry.ts';
 import type { Level, Pick, Section, Setup, Venue } from '../types.ts';
 import { ribbonTexture, scoreboardTexture, stageScreenTexture, suiteTexture, surfaceTexture } from './textures.ts';
 
@@ -110,7 +110,7 @@ export class VenueScene {
   }
 
   private buildBowl() {
-    const { lower, upper } = this.venue.levels, closed = new Set(this.setup.closed), enh = this.enhanced;
+    const rings = ringsOf(this.venue.levels), closed = new Set(this.setup.closed), enh = this.enhanced;
     const pos: number[] = [], col: number[] = [], SEG = 216;
     const C = (h: number) => new THREE.Color(h);
     const push = (q: number[][], c: THREE.Color) => {
@@ -118,37 +118,37 @@ export class VenueScene {
       pos.push(...a, ...b, ...cc, ...a, ...cc, ...d);
       for (let k = 0; k < 6; k++) col.push(c.r, c.g, c.b);
     };
-    const palette = { lower: [C(0x7a1f2b), C(0x681a25)], upper: [C(0x2a3f86), C(0x223672)] };
+    const palette = { lower: [C(0x7a1f2b), C(0x681a25)], middle: [C(0x5b3a8a), C(0x4c2f75)], upper: [C(0x2a3f86), C(0x223672)] };
     const aisle = C(0x3a3a44), drape = C(0x0a0a0d), dasher = C(0x24252d), suite = C(0x3d4560), wall = C(0x14151b), conc = C(0x2a2b33);
     const concrete = C(0x33343b), stair = C(0x4a4b53);
-    const lowerTop = lower.y0 + (lower.rows - 1) * lower.rise;
-    for (const L of [lower, upper]) {
+    rings.forEach((L, ri) => {
+      const below = ri > 0 ? topOf(rings[ri - 1]) : 0, next = rings[ri + 1];
       const step = 360 / L.count;
       for (let s = 0; s < SEG; s++) {
         const d0 = (s / SEG) * 360, d1 = ((s + 1) / SEG) * 360, t0 = rad(d0), t1 = rad(d1);
         const num = numAt(L, (d0 + d1) / 2);
         const v0 = (d0 - 180) / step + L.centerNum, v1 = (d1 - 180) / step + L.centerNum;
         const isAisle = Math.floor(v0 + 0.5) !== Math.floor(v1 + 0.5);
-        const blocked = closed.has(String(num));
+        const blocked = closed.has(secId(L, num));
         for (let r = 1; r <= L.rows; r++) {
           const fa = (r - 1) / L.rows, fb = r / L.rows, y = L.y0 + (r - 1) * L.rise;
           const i0 = ringPt(L, fa, t0), i1 = ringPt(L, fa, t1), o0 = ringPt(L, fb, t0), o1 = ringPt(L, fb, t1);
           let tc = blocked ? drape : isAisle ? (enh ? stair : aisle) : enh ? concrete : palette[L.key][num % 2];
           if (!blocked && !isAisle && r % 2) tc = tc.clone().multiplyScalar(0.86);
           push([[i0[0], y, i0[1]], [o0[0], y, o0[1]], [o1[0], y, o1[1]], [i1[0], y, i1[1]]], tc);
-          const yLow = r === 1 ? (L.key === 'lower' ? 0 : lowerTop) : y - L.rise;
-          const rc = r === 1 ? (L.key === 'lower' ? dasher : enh ? wall : suite) : blocked ? drape : tc.clone().multiplyScalar(enh ? 0.62 : 0.5);
+          const yLow = r === 1 ? below : y - L.rise;
+          const rc = r === 1 ? (ri === 0 ? dasher : enh ? wall : suite) : blocked ? drape : tc.clone().multiplyScalar(enh ? 0.62 : 0.5);
           push([[i0[0], yLow, i0[1]], [i1[0], yLow, i1[1]], [i1[0], y, i1[1]], [i0[0], y, i0[1]]], rc);
         }
-        if (L.key === 'lower') {
-          const a0 = ringPt(L, 1, t0), a1 = ringPt(L, 1, t1), b0 = ringPt(upper, 0, t0), b1 = ringPt(upper, 0, t1);
-          push([[a0[0], lowerTop, a0[1]], [b0[0], lowerTop, b0[1]], [b1[0], lowerTop, b1[1]], [a1[0], lowerTop, a1[1]]], conc);
+        if (next) {
+          const top = topOf(L), a0 = ringPt(L, 1, t0), a1 = ringPt(L, 1, t1), b0 = ringPt(next, 0, t0), b1 = ringPt(next, 0, t1);
+          push([[a0[0], top, a0[1]], [b0[0], top, b0[1]], [b1[0], top, b1[1]], [a1[0], top, a1[1]]], conc);
         } else {
           const top = L.y0 + (L.rows - 1) * L.rise, a0 = ringPt(L, 1, t0), a1 = ringPt(L, 1, t1), ce = this.venue.ceiling;
           push([[a0[0], top, a0[1]], [a1[0], top, a1[1]], [a1[0], ce, a1[1]], [a0[0], ce, a0[1]]], wall);
         }
       }
-    }
+    });
     const geo = new THREE.BufferGeometry();
     geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
     geo.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
@@ -304,8 +304,8 @@ export class VenueScene {
   /** Enhanced-only venue detail: individual seats, railings, glass, suites, LED ribbon, aisle lights, roof. */
   private buildDetail() {
     if (!this.enhanced) { this.replace('detail', null); return; }
-    const G = new THREE.Group(), sport = !!this.setup.sport, { lower: Lw, upper: Up } = this.venue.levels;
-    const lowerTop = Lw.y0 + (Lw.rows - 1) * Lw.rise, dmy = new THREE.Object3D();
+    const G = new THREE.Group(), sport = !!this.setup.sport, rings = ringsOf(this.venue.levels);
+    const Lw = rings[0], Up = rings[rings.length - 1], lowerTop = topOf(Lw), dmy = new THREE.Object3D();
 
     const slots: [number, number, number, number][] = [];
     for (const sec of this.sections) {
@@ -337,12 +337,17 @@ export class VenueScene {
     const glass = new THREE.MeshBasicMaterial({ color: 0xa9c4e0, transparent: true, opacity: 0.13, depthWrite: false, side: THREE.DoubleSide });
     G.add(ringBand(Lw, 0, Lw.y0 - 0.05, Lw.y0 + 0.2, metal));
     G.add(ringBand(Lw, 1, lowerTop, lowerTop + 2.8, glass), ringBand(Lw, 1, lowerTop + 2.8, lowerTop + 3, metal));
-    G.add(ringBand(Up, 0, Up.y0 - 0.2, Up.y0 + 2.7, glass), ringBand(Up, 0, Up.y0 + 2.7, Up.y0 + 2.9, metal));
-    G.add(ringBand(Up, 0, lowerTop + 4, Math.min(lowerTop + 11, Up.y0 - 5.5), new THREE.MeshBasicMaterial({ map: suiteTexture(), side: THREE.DoubleSide }), 20, 0.994));
+    const suiteM = new THREE.MeshBasicMaterial({ map: suiteTexture(), side: THREE.DoubleSide });
+    rings.slice(1).forEach((R, i) => {
+      const prevTop = topOf(rings[i]);
+      G.add(ringBand(R, 0, R.y0 - 0.2, R.y0 + 2.7, glass), ringBand(R, 0, R.y0 + 2.7, R.y0 + 2.9, metal));
+      const suiteTop = Math.min(prevTop + 11, R.y0 - (R === Up ? 5.5 : 1));
+      if (suiteTop - (prevTop + 4) > 2) G.add(ringBand(R, 0, prevTop + 4, suiteTop, suiteM, 20, 0.994));
+    });
     G.add(ringBand(Up, 0, Up.y0 - 4.8, Up.y0 - 1.4, new THREE.MeshBasicMaterial({ map: ribbonTexture(sport), side: THREE.DoubleSide }), 70, 0.992));
 
     const steps: [number, number, number][] = [];
-    for (const L of [Lw, Up]) {
+    for (const L of rings) {
       const stp = 360 / L.count;
       for (let i = 0; i < L.count; i++) {
         const ang = rad(thetaOf(L, L.first + i) + stp / 2);
