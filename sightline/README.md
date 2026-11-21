@@ -57,7 +57,7 @@ tests/                    node:test checks on every venue
 
 ## How a venue is modeled
 
-A venue stores its seating bowl once: two rings (lower and upper level), each with its size, row count, rise per
+A venue stores its seating bowl once: two or three rings (lower, an optional middle club level, upper), each with its size, row count, rise per
 row and section numbering. What changes from event to event is the **setup**:
 
 - where the stage or playing surface is,
