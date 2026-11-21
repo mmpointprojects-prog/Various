@@ -1,0 +1,46 @@
+wave,venue_id,arena,city,state,nba,nhl,status,notes
+0,kaseya-center,Kaseya Center,Miami,FL,Heat,,built,
+0,kia-center,Kia Center,Orlando,FL,Magic,,built,
+0,benchmark-international-arena,Benchmark International Arena,Tampa,FL,,Lightning,built,
+0,amerant-bank-arena,Amerant Bank Arena,Sunrise,FL,,Panthers,built,
+0,vystar-veterans-memorial-arena,VyStar Veterans Memorial Arena,Jacksonville,FL,,,built,ECHL only
+1,chase-center,Chase Center,San Francisco,CA,Warriors,,sample (awaiting OK),Two-level bowl; club/courtside sections not modeled
+1,crypto-com-arena,Crypto.com Arena,Los Angeles,CA,Lakers,Kings,queued,
+1,intuit-dome,Intuit Dome,Inglewood,CA,Clippers,,queued,Basketball-only; steep south wall does not fit the even bowl
+1,golden-1-center,Golden 1 Center,Sacramento,CA,Kings,,queued,
+1,sap-center,SAP Center,San Jose,CA,,Sharks,queued,
+1,honda-center,Honda Center,Anaheim,CA,,Ducks,queued,
+1,climate-pledge-arena,Climate Pledge Arena,Seattle,WA,,Kraken,queued,
+1,moda-center,Moda Center,Portland,OR,Trail Blazers,,queued,
+1,t-mobile-arena,T-Mobile Arena,Las Vegas,NV,,Golden Knights,queued,
+1,mortgage-matchup-center,Mortgage Matchup Center,Phoenix,AZ,Suns,,queued,Renamed from Footprint Center (Oct 2025)
+1,delta-center,Delta Center,Salt Lake City,UT,Jazz,Mammoth,queued,Hockey layout has obstructed end seats
+1,ball-arena,Ball Arena,Denver,CO,Nuggets,Avalanche,queued,
+2,american-airlines-center,American Airlines Center,Dallas,TX,Mavericks,Stars,queued,
+2,toyota-center,Toyota Center,Houston,TX,Rockets,,queued,
+2,frost-bank-center,Frost Bank Center,San Antonio,TX,Spurs,,queued,
+2,paycom-center,Paycom Center,Oklahoma City,OK,Thunder,,queued,
+2,smoothie-king-center,Smoothie King Center,New Orleans,LA,Pelicans,,queued,
+2,fedexforum,FedExForum,Memphis,TN,Grizzlies,,queued,
+2,bridgestone-arena,Bridgestone Arena,Nashville,TN,,Predators,queued,
+2,state-farm-arena,State Farm Arena,Atlanta,GA,Hawks,,queued,
+2,spectrum-center,Spectrum Center,Charlotte,NC,Hornets,,queued,
+2,lenovo-center,Lenovo Center,Raleigh,NC,,Hurricanes,queued,
+2,capital-one-arena,Capital One Arena,Washington,DC,Wizards,Capitals,queued,
+3,united-center,United Center,Chicago,IL,Bulls,Blackhawks,queued,
+3,fiserv-forum,Fiserv Forum,Milwaukee,WI,Bucks,,queued,
+3,target-center,Target Center,Minneapolis,MN,Timberwolves,,queued,
+3,grand-casino-arena,Grand Casino Arena,St. Paul,MN,,Wild,queued,Renamed from Xcel Energy Center (Sep 2025)
+3,enterprise-center,Enterprise Center,St. Louis,MO,,Blues,queued,
+3,gainbridge-fieldhouse,Gainbridge Fieldhouse,Indianapolis,IN,Pacers,,queued,
+3,little-caesars-arena,Little Caesars Arena,Detroit,MI,Pistons,Red Wings,queued,
+3,rocket-arena,Rocket Arena,Cleveland,OH,Cavaliers,,queued,Renamed from Rocket Mortgage FieldHouse (Feb 2025)
+3,nationwide-arena,Nationwide Arena,Columbus,OH,,Blue Jackets,queued,
+3,ppg-paints-arena,PPG Paints Arena,Pittsburgh,PA,,Penguins,queued,
+4,td-garden,TD Garden,Boston,MA,Celtics,Bruins,queued,
+4,madison-square-garden,Madison Square Garden,New York,NY,Knicks,Rangers,queued,Bridges and 200 Level layout are unusual
+4,barclays-center,Barclays Center,Brooklyn,NY,Nets,,queued,
+4,ubs-arena,UBS Arena,Elmont,NY,,Islanders,queued,
+4,prudential-center,Prudential Center,Newark,NJ,,Devils,queued,
+4,keybank-center,KeyBank Center,Buffalo,NY,,Sabres,queued,
+4,xfinity-mobile-arena,Xfinity Mobile Arena,Philadelphia,PA,76ers,Flyers,queued,

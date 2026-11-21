@@ -5,10 +5,10 @@ import { rad, ringPt, rowsOf, sectionsFor, seatPos } from '../src/lib/geometry.t
 import { metrics } from '../src/lib/scoring.ts';
 import type { SetupId } from '../src/lib/types.ts';
 
-test('five Florida venues with unique ids', () => {
-  assert.equal(VENUES.length, 5);
-  assert.equal(new Set(VENUES.map((v) => v.id)).size, 5);
-  for (const v of VENUES) assert.equal(v.state, 'FL');
+test('venues have unique ids and U.S. state codes', () => {
+  assert.ok(VENUES.length >= 6);
+  assert.equal(new Set(VENUES.map((v) => v.id)).size, VENUES.length);
+  for (const v of VENUES) assert.match(v.state, /^[A-Z]{2}$/);
 });
 
 for (const v of VENUES) {

@@ -25,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <span className="mark" aria-hidden="true" />
               <span><h1 style={{ fontSize: 26 }}>Sightline</h1></span>
             </Link>
-            <span className="tag">Florida preview</span>
+            <span className="tag">Preview</span>
           </header>
           {children}
           <footer>

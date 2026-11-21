@@ -4,7 +4,7 @@ Compare the view from up to four seats side by side before you buy concert or ga
 Pick a venue and an event, tap sections on the seat map, and each seat gets a 3D view of the stage or court,
 plus distance, viewing angle, eye height, a sightline score and a sample price.
 
-This first version covers five Florida arenas. They are the template for every venue that follows.
+This version covers five Florida arenas plus Chase Center (San Francisco), the first sample of the U.S. rollout. The rollout list is in `docs/`.
 
 | Venue | City | Setups |
 | --- | --- | --- |
